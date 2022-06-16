@@ -17,7 +17,6 @@ def splitExpr(input):
                 i = i - 1
             if(i == 0):
                 break
-        print("i = ",i)
         inputList.append(input[0: j])
         inputList.append(input[j + 1:])
     else:
@@ -25,8 +24,7 @@ def splitExpr(input):
     
     return inputList
 
-def printResult(input):
-    print("input: " + input)
+def calculateResult(input):
     ##check if int
     if(input.isnumeric()):
         return input
@@ -34,17 +32,27 @@ def printResult(input):
     elif(input[0] == '(' and input[-1] == ')'):
         input = input[1:-1]
         inputList = input.split(' ', 1)
+
         ##split inputList[1] into two parts
         newList = splitExpr(inputList[1])
-        print("inputList",inputList)
-        print("newList: ",newList)
         inputList[1] = newList[0]
         inputList.append(newList[1])
-        print("inputList",inputList)
 
+        #recursive elements
+        inputList[1] = calculateResult(inputList[1])
+        inputList[2] = calculateResult(inputList[2])
 
-        if(inputList[0] == "add"):
-            print("accessed")
+        if(inputList[1].isnumeric() and inputList[2].isnumeric()):
+            if(inputList[0] == "add"):
+                result = int(inputList[1]) + int(inputList[2])
+                input = str(result)
+            elif(inputList[0] == "multiply"):
+                result = int(inputList[1]) * int(inputList[2])
+                input = str(result)
+            else:
+                input = "invalid input"
+        else:
+            input = "invalid input"
     else:
         input = "invalid input"
     
@@ -55,8 +63,8 @@ if(argLen != 2):
     print("Expected single argument")
 else:
     input = sys.argv[1]
-    printResult(input)
-
+    result = calculateResult(input)
+    print(result)
 
 
 ##EXPR = INTEGER | ADD | MULTIPLY
